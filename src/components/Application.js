@@ -27,22 +27,23 @@ const Application = () => {
     total: 0,
   });
   const [ticker, setTicker] = useState('');
-  const [time, setTime] = useState(today - timeOffsets['1 Week']);
+  const [time, setTime] = useState('1 Month');
   const [percent, setPercent] = useState(1.03);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const debouncedTicker = useDebounce(ticker, 500);
+  const searchTime = today - timeOffsets[time];
 
-  let URL = `/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
+  let URL = `/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${searchTime}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
   };
 
   const handleTime = (e) => {
-    setTime(today - timeOffsets[e]);
+    setTime(e);
   };
 
   const handlePercent = (e) => {
@@ -87,6 +88,18 @@ const Application = () => {
       {error && <div className="text-danger">{errorMsg}</div>}
       <Table striped bordered hover variant="dark">
         <thead>
+          {debouncedTicker && !error ? (
+            <tr>
+              <th className="text-center" colSpan="4">
+                {debouncedTicker}: {time} at {Math.round((percent - 1) * 100)}%
+                Gain
+              </th>
+            </tr>
+          ) : (
+            <tr>
+              <th className="text-center" colSpan="4"></th>
+            </tr>
+          )}
           <tr>
             <th>DATE</th>
             <th>OPENING</th>
