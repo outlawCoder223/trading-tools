@@ -29,7 +29,7 @@ const Application = () => {
 
   const debouncedTicker = useDebounce(ticker, 500);
 
-  let URL = `http://localhost:3001/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
+  let URL = `https://trading-tools-api.herokuapp.com/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
