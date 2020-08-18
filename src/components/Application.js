@@ -70,6 +70,7 @@ const Application = () => {
         handlePercent={handlePercent}
         ticker={ticker}
       />
+      {isSearching && <div className="text-light">Searching...</div>}
       <Table striped bordered hover variant="dark">
         <thead>
           <tr>
