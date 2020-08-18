@@ -85,21 +85,18 @@ const Application = () => {
         ticker={ticker}
       />
       {isSearching && <div className="text-light">Searching...</div>}
-      {error && <div className="text-danger">{errorMsg}</div>}
+      {error && <h2 className="text-danger">{errorMsg}</h2>}
+      {!error && debouncedTicker && (
+        <div className="text-light h2">{stockData.total} results</div>
+      )}
       <Table striped bordered hover variant="dark">
         <thead>
-          {debouncedTicker && !error ? (
-            <tr>
-              <th className="text-center" colSpan="4">
-                {debouncedTicker}: {time} at {Math.round((percent - 1) * 100)}%
-                Gain
-              </th>
-            </tr>
-          ) : (
-            <tr>
-              <th className="text-center" colSpan="4"></th>
-            </tr>
-          )}
+          <tr>
+            <th className="text-center" colSpan="4">
+              {time} at {Math.round((percent - 1) * 100)}% Gain
+            </th>
+          </tr>
+
           <tr>
             <th>DATE</th>
             <th>OPENING</th>
