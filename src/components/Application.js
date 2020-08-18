@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import StockForm from './StockForm';
-import findFluctuations from '../helpers/findFluctuations';
+import useDebounce from '../hooks/useDebounce';
 
 const timeOffsets = {
   '1 Week': 604800,
@@ -22,11 +22,14 @@ const Application = () => {
     date: [],
     total: 0,
   });
-  const [ticker, setTicker] = useState('TSLA');
+  const [ticker, setTicker] = useState('');
   const [time, setTime] = useState(today - timeOffsets['1 Week']);
   const [percent, setPercent] = useState(1.03);
+  const [isSearching, setIsSearching] = useState(false);
 
-  let URL = `http://localhost:3001/api/v1/stocks/percent-above/ticker=${ticker}&percent=${percent}&time=${time}`;
+  const debouncedTicker = useDebounce(ticker, 500);
+
+  let URL = `http://localhost:3001/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
@@ -41,18 +44,23 @@ const Application = () => {
   };
 
   useEffect(() => {
-    axios
-      .get(URL)
-      .then(function (response) {
-        const results = response.data;
-        setStockData((p) => {
-          return { ...p, ...results };
+    if (debouncedTicker) {
+      setIsSearching(true);
+
+      axios
+        .get(URL)
+        .then(function (response) {
+          const results = response.data;
+          setStockData((p) => {
+            return { ...p, ...results };
+          });
+          setIsSearching(false);
+        })
+        .catch(function (error) {
+          console.log(error);
         });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [URL, time, percent]);
+    }
+  }, [URL, debouncedTicker]);
 
   return (
     <>
