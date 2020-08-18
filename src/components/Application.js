@@ -26,7 +26,7 @@ const Application = () => {
   const [time, setTime] = useState(today - timeOffsets['1 Week']);
   const [percent, setPercent] = useState(1.03);
 
-  let URL = `https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${time}&to=${today}&token=${process.env.REACT_APP_API_KEY}`;
+  let URL = `http://localhost:3001/api/v1/stocks/percent-above/ticker=${ticker}&percent=${percent}&time=${time}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
@@ -44,7 +44,7 @@ const Application = () => {
     axios
       .get(URL)
       .then(function (response) {
-        const results = findFluctuations(response.data, percent);
+        const results = response.data;
         setStockData((p) => {
           return { ...p, ...results };
         });
