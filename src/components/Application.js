@@ -4,6 +4,10 @@ import Table from 'react-bootstrap/Table';
 import StockForm from './StockForm';
 import useDebounce from '../hooks/useDebounce';
 
+if (process.env.REACT_APP_API_BASE_URL) {
+  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
+}
+
 const timeOffsets = {
   '1 Week': 604800,
   '2 Weeks': 1209600,
@@ -26,10 +30,12 @@ const Application = () => {
   const [time, setTime] = useState(today - timeOffsets['1 Week']);
   const [percent, setPercent] = useState(1.03);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const debouncedTicker = useDebounce(ticker, 500);
 
-  let URL = `https://trading-tools-api.herokuapp.com/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
+  let URL = `/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
@@ -51,9 +57,16 @@ const Application = () => {
         .get(URL)
         .then(function (response) {
           const results = response.data;
-          setStockData((p) => {
-            return { ...p, ...results };
-          });
+          if (results.error) {
+            setError(true);
+            setErrorMsg(results.error);
+          } else {
+            setStockData((p) => {
+              return { ...p, ...results };
+            });
+            setError(false);
+            setErrorMsg('');
+          }
           setIsSearching(false);
         })
         .catch(function (error) {
@@ -71,6 +84,7 @@ const Application = () => {
         ticker={ticker}
       />
       {isSearching && <div className="text-light">Searching...</div>}
+      {error && <div className="text-danger">{errorMsg}</div>}
       <Table striped bordered hover variant="dark">
         <thead>
           <tr>
