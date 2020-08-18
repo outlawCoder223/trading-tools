@@ -4,6 +4,10 @@ import Table from 'react-bootstrap/Table';
 import StockForm from './StockForm';
 import useDebounce from '../hooks/useDebounce';
 
+if (process.env.REACT_APP_API_BASE_URL) {
+  axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
+}
+
 const timeOffsets = {
   '1 Week': 604800,
   '2 Weeks': 1209600,
@@ -29,7 +33,7 @@ const Application = () => {
 
   const debouncedTicker = useDebounce(ticker, 500);
 
-  let URL = `https://trading-tools-api.herokuapp.com/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
+  let URL = `/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${time}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
