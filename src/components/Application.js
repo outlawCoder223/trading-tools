@@ -30,6 +30,8 @@ const Application = () => {
   const [time, setTime] = useState(today - timeOffsets['1 Week']);
   const [percent, setPercent] = useState(1.03);
   const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const debouncedTicker = useDebounce(ticker, 500);
 
@@ -55,9 +57,16 @@ const Application = () => {
         .get(URL)
         .then(function (response) {
           const results = response.data;
-          setStockData((p) => {
-            return { ...p, ...results };
-          });
+          if (results.error) {
+            setError(true);
+            setErrorMsg(results.error);
+          } else {
+            setStockData((p) => {
+              return { ...p, ...results };
+            });
+            setError(false);
+            setErrorMsg('');
+          }
           setIsSearching(false);
         })
         .catch(function (error) {
@@ -75,6 +84,7 @@ const Application = () => {
         ticker={ticker}
       />
       {isSearching && <div className="text-light">Searching...</div>}
+      {error && <div className="text-danger">{errorMsg}</div>}
       <Table striped bordered hover variant="dark">
         <thead>
           <tr>
