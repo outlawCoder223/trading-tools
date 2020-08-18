@@ -17,9 +17,9 @@ const StockForm = ({ handleInput, handleTime, handlePercent, ticker }) => {
   return (
     <InputGroup>
       <FormControl
-        placeholder="Stock Ticker"
+        placeholder="Ticker"
         defaultValue={ticker}
-        aria-label="Stock Ticker"
+        aria-label="Ticker"
         aria-describedby="basic-addon2"
         onInput={handleInput}
       />
@@ -27,7 +27,7 @@ const StockForm = ({ handleInput, handleTime, handlePercent, ticker }) => {
       <DropdownButton
         as={InputGroup.Append}
         variant="outline-light"
-        title="Select Timeframe"
+        title="Select Time"
         id="input-group-dropdown-2"
         onSelect={handleTime}
       >
