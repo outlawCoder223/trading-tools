@@ -8,17 +8,16 @@ if (process.env.REACT_APP_API_BASE_URL) {
   axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 }
 
-const timeOffsets = {
-  '1 Week': 604800,
-  '2 Weeks': 1209600,
-  '1 Month': 2592000,
-  '3 Months': 7776000,
-  '6 Months': 15552000,
-  '1 Year': 31536000,
-};
+const timeOffsets = [
+  '1 Week',
+  '2 Weeks',
+  '1 Month',
+  '3 Months',
+  '6 Months',
+  '1 Year',
+];
 
 const Application = () => {
-  const today = Math.floor(Date.now() / 1000);
   const [stockData, setStockData] = useState({
     o: [],
     h: [],
@@ -34,9 +33,10 @@ const Application = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const debouncedTicker = useDebounce(ticker, 500);
-  const searchTime = today - timeOffsets[time];
 
-  let URL = `/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${searchTime}`;
+  let URL = `/api/v1/stocks/percent-above/ticker=${debouncedTicker}&percent=${percent}&time=${timeOffsets.indexOf(
+    time
+  )}`;
 
   const handleInput = (e) => {
     setTicker(e.target.value.toUpperCase());
